@@ -24,14 +24,17 @@ app.use(expenseRoute);
 app.get("/", (request, response) => {
   response.send("Home Working");
 });
+
 app.use((request, response, next) => {
   response.status(404).send("Error 404");
 });
+
 // app.listen(port, async () => {
 //   sequelize.sync({ alter: true }), console.log("Database Connected");
 //   console.log(`App is running on Port ${port}`),
 //     console.log("------------App Started--------------");
 // });
+
 app.listen(port, async () => {
   sequelize.authenticate(), console.log("Database Connected");
   console.log(`App is running on Port ${port}`),
