@@ -34,7 +34,7 @@ const getUserExpenseByID = async (id) => {
 const getadminExpense = async () => {
   try {
     const results = await sequelize.query(
-      "SELECT user_id, `weekDay`, SUM(amount) FROM `expenses` GROUP BY WEEKDAY, user_id",
+      "SELECT user_id, `weekDay`, SUM(amount) as Sum FROM `expenses` GROUP BY WEEKDAY, user_id",
       {
         type: sequelize.QueryTypes.SELECT,
       }

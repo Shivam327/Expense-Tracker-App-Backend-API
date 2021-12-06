@@ -41,14 +41,14 @@ router.post(
 
 router.get("/expense/summary", verifyToken, async (request, response) => {
   const user_id = request.userDetail.userId;
-  // if (user_id === 1) {
-  //   let result = getadminExpense();
-  //   response.send(result);
-  // }
+  if (user_id === 1) {
+    let result = await getadminExpense();
+    response.send(result);
+  }
 
   let result = await getUserExpenseByID(user_id);
   //const summary = summaryObj(result);
-  if (summary !== null) {
+  if (result !== null) {
     response.send(result);
   } else {
     return response.status(500);
