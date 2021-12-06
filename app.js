@@ -5,7 +5,7 @@ const dotenv = require("dotenv");
 const { sequelize, User } = require("./models");
 //Routes
 const loginRoute = require("./routes/login");
-const userRoute = require("./routes/user");
+const signupRoute = require("./routes/signup");
 const roleRoute = require("./routes/role");
 const expenseRoute = require("./routes/expense");
 
@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(loginRoute);
-app.use(userRoute);
+app.use(signupRoute);
 app.use(roleRoute);
 app.use(expenseRoute);
 
@@ -29,14 +29,14 @@ app.use((request, response, next) => {
   response.status(404).send("Error 404");
 });
 
-// app.listen(port, async () => {
-//   sequelize.sync({ alter: true }), console.log("Database Connected");
-//   console.log(`App is running on Port ${port}`),
-//     console.log("------------App Started--------------");
-// });
-
 app.listen(port, async () => {
-  sequelize.authenticate(), console.log("Database Connected");
+  sequelize.sync({ alter: true }), console.log("Database Connected");
   console.log(`App is running on Port ${port}`),
     console.log("------------App Started--------------");
 });
+
+// app.listen(port, async () => {
+//   sequelize.authenticate(), console.log("Database Connected");
+//   console.log(`App is running on Port ${port}`),
+//     console.log("------------App Started--------------");
+// });

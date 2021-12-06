@@ -2,20 +2,35 @@ const express = require("express");
 const { verifyToken } = require("../middleware/auth");
 const { Expense } = require("../models");
 const { ExpenseSchema, validateExpense } = require("../middleware/validation");
+const { hasRole } = require("../middleware/role");
+const { getUserExpenseByID, getadminExpense } = require("../utils/query");
+const { summaryObj } = require("../utils/objCreate");
 const router = express.Router();
 
 router.post(
   "/expense",
   verifyToken,
+  hasRole(["user"]),
   validateExpense(ExpenseSchema),
   async (request, response) => {
-    const { title, amount, date } = request.body;
+    let { title, amount, date } = request.body;
 
+    date = date.split("/").reverse().join("/");
+    date = date.replace(/\//g, "-");
+    let dateObj = new Date(date);
+    let weekDay = dateObj.getDay();
+    if (weekDay === 0) weekDay = 7;
     try {
-      let expense = await Expense.create({ title, amount, date });
+      let expense = await Expense.create({
+        title,
+        amount,
+        date,
+        weekDay,
+        user_id: request.userDetail.userId,
+      });
       return response.status(201).send({
         status: true,
-        message: `Expense with ${expense.id} created successfully`,
+        message: `Expense with id ${expense.id} created successfully`,
       });
     } catch (error) {
       console.log(error);
@@ -24,24 +39,17 @@ router.post(
   }
 );
 
-router.get("/expense/summary", async (request, response) => {
-  const { id } = request.body;
-  if (!id)
-    return response.send({ Error: "Please Put all of input Field Proper" });
-  let summary = await Expense.findOne({ where: { id } });
+router.get("/expense/summary", verifyToken, async (request, response) => {
+  const user_id = request.userDetail.userId;
+  // if (user_id === 1) {
+  //   let result = getadminExpense();
+  //   response.send(result);
+  // }
 
+  let result = await getUserExpenseByID(user_id);
+  //const summary = summaryObj(result);
   if (summary !== null) {
-    let { title, amount, date } = summary;
-    response.send({ title, amount, date });
-  } else {
-    return response.status(500);
-  }
-});
-router.get("/expense/adminsummary", async (request, response) => {
-  let summary = await Expense.findAll();
-
-  if (summary !== null) {
-    response.send(summary);
+    response.send(result);
   } else {
     return response.status(500);
   }
