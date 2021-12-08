@@ -8,7 +8,6 @@ const getUserById = async (id) => {
         type: sequelize.QueryTypes.SELECT,
       }
     );
-
     return results[0];
   } catch (error) {
     console.log(error);

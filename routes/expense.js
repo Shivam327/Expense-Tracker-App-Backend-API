@@ -1,17 +1,17 @@
 const express = require("express");
 const { verifyToken } = require("../middleware/auth");
 const { Expense } = require("../models");
-const { ExpenseSchema, validateExpense } = require("../middleware/validation");
+const { ExpenseSchema, validate } = require("../middleware/validation");
 const { hasRole } = require("../middleware/role");
 const { getUserExpenseByID, getadminExpense } = require("../utils/query");
-const { summaryObj } = require("../utils/objCreate");
+const { userSummaryObj, adminSummaryObj } = require("../utils/objCreate");
 const router = express.Router();
 
 router.post(
   "/expense",
   verifyToken,
   hasRole(["user"]),
-  validateExpense(ExpenseSchema),
+  validate(ExpenseSchema),
   async (request, response) => {
     let { title, amount, date } = request.body;
 
@@ -43,13 +43,14 @@ router.get("/expense/summary", verifyToken, async (request, response) => {
   const user_id = request.userDetail.userId;
   if (user_id === 1) {
     let result = await getadminExpense();
-    response.send(result);
+    let summary = adminSummaryObj(result);
+    response.status(200).send(result);
   }
 
   let result = await getUserExpenseByID(user_id);
-  //const summary = summaryObj(result);
+  const summary = userSummaryObj(result);
   if (result !== null) {
-    response.send(result);
+    response.status(200).send(summary);
   } else {
     return response.status(500);
   }

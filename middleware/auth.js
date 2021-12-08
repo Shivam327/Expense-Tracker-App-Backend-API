@@ -1,6 +1,7 @@
 var jwt = require("jsonwebtoken");
 const JWT_TOKEN = "mykey@1234";
 const { getUserById } = require("../utils/query");
+const { getUserDetails } = require("../utils/userDetail");
 
 const verifyToken = async (request, response, next) => {
   const token =
@@ -26,11 +27,8 @@ const verifyToken = async (request, response, next) => {
         message: "Unauthorized",
       });
     }
-    let userDetail = {
-      role_id: user.role_id,
-      userId: user.id,
-      role: user.role_name,
-    };
+
+    let userDetail = getUserDetails(user);
     console.log("User Detial is:", userDetail);
 
     request.userDetail = userDetail;

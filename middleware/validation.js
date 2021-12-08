@@ -12,21 +12,7 @@ exports.ExpenseSchema = joi.object({
   date: joi.string().required(),
 });
 
-exports.validateSignup = (schema) => (request, response, next) => {
-  const { error } = schema.validate(request.body, {
-    abortEarly: false,
-  });
-
-  if (error) {
-    return response.send({
-      success: false,
-      message: error.details[0].message,
-    });
-  }
-  next();
-};
-
-exports.validateExpense = (schema) => (request, response, next) => {
+exports.validate = (schema) => (request, response, next) => {
   const { error } = schema.validate(request.body, {
     abortEarly: false,
   });
